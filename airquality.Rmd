@@ -1,0 +1,35 @@
+---
+title: "Air Quality"
+output: html_notebook
+author: "Robert Ramos"
+---
+```{r}
+install.packages("tidyverse")
+library("tidyverse")
+library("caret")
+library("dplyr")
+data(airquality)
+
+air<-as_tibble(airquality)
+
+cor.test(x= air$Ozone,y= air$Solar.R)
+ggplot(air, aes(x = Temp,y = Ozone)) + geom_point()
+
+##We want a nice p value, we want it to be less than .05
+simple_model<-lm(air, formula = Ozone ~ Wind)
+summary(simple_model)
+
+##Here we use all the variables to see how they affect ozone
+quality_model<- lm(air, formula = Ozone ~ Solar.R + Wind + Temp + Month + Day)
+summary(quality_model)
+
+##To exclude the rows that have NA values
+air<-as.tibble(airquality) %>% subset(!is.na(Ozone) & !is.na(Solar.R))
+
+##Doing random sampling now
+set.seed(385)
+Sample<-CreateDataPartition(air$Ozone,p = 0.7, list = false)
+train<-air[sample, ]
+test<- air[-sample, ]
+train_model<-
+```
